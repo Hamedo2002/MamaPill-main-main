@@ -1,0 +1,1 @@
+/Users/hamedo/Desktop/MamaPill-main-main/build/app/intermediates/cxx/RelWithDebInfo/v5g725e6/obj/arm64-v8a

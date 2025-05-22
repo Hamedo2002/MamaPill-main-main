@@ -1,0 +1,2 @@
+/Users/hamedo/Desktop/MamaPill-main-main/android/app/.cxx/RelWithDebInfo/v5g725e6/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/hamedo/Desktop/MamaPill-main-main/android/app/.cxx/RelWithDebInfo/v5g725e6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
