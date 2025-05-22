@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Define missing enum
-enum DeviceScreenType { mobile, tablet,push desktop }
+enum DeviceScreenType { mobile, tablet, desktop }
 
 // Define missing class
 class ResponsiveWrapper {
