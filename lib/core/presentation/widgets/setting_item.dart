@@ -8,15 +8,19 @@ class SettingItem extends StatelessWidget {
     super.key,
     required this.label,
     required this.icon,
-    required this.onTap,
+    this.onTap,
     this.color = AppColors.textPrimary,
     this.isLast = false,
+    this.trailing,
+    this.subtitle,
   });
   final String label;
   final IconData icon;
-  final Function() onTap;
+  final Function()? onTap;
   final Color color;
   final bool isLast;
+  final Widget? trailing;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +36,15 @@ class SettingItem extends StatelessWidget {
               leading: Icon(icon, color: color),
               title: Text(label,
                   style: textTheme.bodyMedium!.copyWith(color: color)),
-              trailing: Icon(Icons.arrow_forward_ios,
-                  size: AppSize.s16.sp, color: color),
+              subtitle: subtitle != null
+                  ? Text(subtitle!,
+                      style: textTheme.bodySmall!.copyWith(
+                          color: color.withOpacity(0.7)))
+                  : null,
+              trailing: trailing ?? (onTap != null
+                  ? Icon(Icons.arrow_forward_ios,
+                      size: AppSize.s16.sp, color: color)
+                  : null),
             ),
             if (!isLast)
               Divider(

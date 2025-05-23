@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama_pill/core/domain/usecase/usecase.dart';
 import 'package:mama_pill/core/utils/enums.dart';
 import 'package:mama_pill/features/authentication/domain/entities/user_profile.dart';
@@ -41,9 +42,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<FutureOr<void>> _onAuthChecked(
       AuthChecked event, Emitter<AuthState> emit) async {
     User? user = event.user;
+    final prefs = await SharedPreferences.getInstance();
     if (user != null) {
+      await prefs.setBool('is_authenticated', true);
       emit(state.copyWith(status: AppStatus.authenticated));
     } else {
+      await prefs.setBool('is_authenticated', false);
       emit(state.copyWith(status: AppStatus.unauthenticated));
     }
   }
@@ -52,6 +56,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthLogoutRequested event, Emitter<AuthState> emit) async {
     try {
       await logoutUseCase(const NoParams());
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('is_authenticated', false);
       emit(state.copyWith(
           status: AppStatus.unauthenticated, user: const UserProfile.empty()));
     } catch (e) {

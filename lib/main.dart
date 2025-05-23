@@ -3,6 +3,7 @@ import 'package:mama_pill/core/resources/theme.dart';
 import 'package:mama_pill/core/services/bloc_observer.dart';
 import 'package:mama_pill/core/services/local_notification_services.dart';
 import 'package:mama_pill/core/services/service_locator.dart';
+import 'package:mama_pill/core/presentation/widgets/pin_protected_app.dart';
 import 'package:mama_pill/core/helpers/time_zone_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +112,8 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       useInheritedMediaQuery: true,
       builder: (context, child) {
-        return MaterialApp.router(
+        return PinProtectedApp(
+          child: MaterialApp.router(
           routerConfig: sl<AppRouter>().router,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.getThemeData(),
@@ -127,6 +129,7 @@ class MyApp extends StatelessWidget {
               child: widget!,
             );
           },
+        ),
         );
       },
     );

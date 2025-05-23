@@ -9,6 +9,7 @@ import 'package:mama_pill/core/resources/values.dart';
 import 'package:mama_pill/core/services/local_notification_services.dart';
 import 'package:mama_pill/features/authentication/domain/entities/user_profile.dart';
 import 'package:mama_pill/features/authentication/presentation/controller/auth/bloc/auth_bloc.dart';
+import 'package:mama_pill/core/presentation/view/pin_setup_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
@@ -37,8 +38,10 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   bool _notificationsEnabled = true;
+  bool _pinEnabled = false;
 
   static const String _notificationsKey = 'notifications_enabled';
+  static const String _pinEnabledKey = 'pin_enabled';
 
   // Initialize with default values to avoid LateInitializationError
   late AnimationController _animationController = AnimationController(
@@ -61,6 +64,7 @@ class _SettingsViewState extends State<SettingsView>
     super.initState();
 
     _loadNotificationState();
+    _loadPinState();
 
     // Start the animation
     _animationController.forward();
@@ -88,16 +92,28 @@ class _SettingsViewState extends State<SettingsView>
     await prefs.setBool(_notificationsKey, value);
   }
 
-  Future<void> _checkNotificationStatus() async {
-    final bool? permission = await LocalNotificationServices.notification
-        .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin
-        >()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
+  Future<void> _loadPinState() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _notificationsEnabled = permission ?? false;
+      _pinEnabled = prefs.getBool(_pinEnabledKey) ?? false;
     });
-    await _saveNotificationState(_notificationsEnabled);
+  }
+
+  Future<void> _togglePin() async {
+    if (!_pinEnabled) {
+      final result = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(builder: (context) => const PinSetupView()),
+      );
+      if (result == true) {
+        setState(() => _pinEnabled = true);
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_pinEnabledKey, false);
+      await prefs.remove('app_pin');
+      setState(() => _pinEnabled = false);
+    }
   }
 
   Future<void> _toggleNotifications(bool value) async {
@@ -323,6 +339,58 @@ class _SettingsViewState extends State<SettingsView>
             indent: AppWidth.w52.w,
             endIndent: 20.w,
             color: AppColors.divider.withOpacity(0.2),
+          ),
+          Column(
+            children: [
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _togglePin,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4CAF50).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Icon(
+                            Icons.lock_outline_rounded,
+                            color: const Color(0xFF4CAF50),
+                            size: 22.r,
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Text(
+                          'PIN Security',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF4CAF50),
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: const Color(0xFF4CAF50),
+                          size: 24.r,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Divider(
+                height: 0,
+                thickness: 1,
+                indent: AppWidth.w52.w,
+                endIndent: 20.w,
+                color: AppColors.divider.withOpacity(0.2),
+              ),
+            ],
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 6.h),
