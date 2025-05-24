@@ -114,22 +114,22 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return PinProtectedApp(
           child: MaterialApp.router(
-          routerConfig: sl<AppRouter>().router,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.getThemeData(),
-          builder: (context, widget) {
-            ScreenUtil.init(context);
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaleFactor:
-                    MediaQuery.of(context).textScaleFactor > 1.2
-                        ? 1.2
-                        : MediaQuery.of(context).textScaleFactor,
-              ),
-              child: widget!,
-            );
-          },
-        ),
+            routerConfig: sl<AppRouter>().router,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.getThemeData(),
+            builder: (context, widget) {
+              ScreenUtil.init(context);
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaleFactor:
+                      MediaQuery.of(context).textScaleFactor > 1.2
+                          ? 1.2
+                          : MediaQuery.of(context).textScaleFactor,
+                ),
+                child: widget!,
+              );
+            },
+          ),
         );
       },
     );
