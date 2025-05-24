@@ -40,6 +40,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   String _selectedBloodType = ''; // For dropdown
+  final _bloodPressureController = TextEditingController();
+  final _sugarPercentageController = TextEditingController();
   final _emergencyContactController = TextEditingController();
   
   // Options for dropdowns
@@ -65,6 +67,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
     _allergiesController.dispose();
     _weightController.dispose();
     _heightController.dispose();
+    _bloodPressureController.dispose();
+    _sugarPercentageController.dispose();
     _emergencyContactController.dispose();
     super.dispose();
   }
@@ -78,6 +82,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
     _weightController.text = record.weight.toString();
     _heightController.text = record.height.toString();
     _selectedBloodType = record.bloodType;
+    _bloodPressureController.text = record.bloodPressure;
+    _sugarPercentageController.text = record.sugarPercentage.toString();
     _emergencyContactController.text = record.emergencyContact;
   }
 
@@ -90,6 +96,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
     _weightController.clear();
     _heightController.clear();
     _selectedBloodType = '';
+    _bloodPressureController.clear();
+    _sugarPercentageController.clear();
     _emergencyContactController.clear();
   }
 
@@ -113,6 +121,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
       weight: double.tryParse(_weightController.text) ?? 0.0,
       height: double.tryParse(_heightController.text) ?? 0.0,
       bloodType: _selectedBloodType,
+      bloodPressure: _bloodPressureController.text,
+      sugarPercentage: double.tryParse(_sugarPercentageController.text) ?? 0.0,
       emergencyContact: _emergencyContactController.text,
       lastUpdated: DateTime.now(),
       updatedBy: widget.authBloc.state.user.username ?? 'Unknown user',
@@ -398,6 +408,8 @@ class _PatientRecordViewState extends State<PatientRecordView> {
         _buildInfoTile('Weight', '${record.weight} kg'),
         _buildInfoTile('Height', '${record.height} cm'),
         _buildInfoTile('Blood Type', record.bloodType.isNotEmpty ? record.bloodType : 'Not specified'),
+        _buildInfoTile('Blood Pressure', record.bloodPressure.isNotEmpty ? record.bloodPressure : 'Not specified'),
+        _buildInfoTile('Blood Sugar', '${record.sugarPercentage} %'),
         
         SizedBox(height: 24.h),
         _buildSectionHeader('Medical Information'),
@@ -554,6 +566,41 @@ class _PatientRecordViewState extends State<PatientRecordView> {
               setState(() {
                 _selectedBloodType = newValue ?? '';
               });
+            },
+          ),
+          SizedBox(height: 16.h),
+          
+          // Blood Pressure field
+          TextFormField(
+            controller: _bloodPressureController,
+            decoration: InputDecoration(
+              hintText: 'Blood Pressure (e.g. 120/80)',
+              hintStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+              prefixIcon: Icon(Icons.favorite, size: 20.sp),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+            ),
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16.h),
+          
+          // Sugar Percentage field
+          TextFormField(
+            controller: _sugarPercentageController,
+            decoration: InputDecoration(
+              hintText: 'Blood Sugar Percentage (%)',
+              hintStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+              prefixIcon: Icon(Icons.water_drop, size: 20.sp),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+            ),
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value != null && value.isNotEmpty) {
+                if (double.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+              }
+              return null;
             },
           ),
           SizedBox(height: 24.h),
